@@ -1,0 +1,37 @@
+<script>
+  $(document).ready(function () {
+
+    // Get URl path
+    var path = window.location.pathname
+
+    // Replace leading and trailing slashes
+    path = path.replace(/\/$/, "").replace(/^\//, "");
+
+    // For each menu item, if the URL path matches, set the appropriate class
+    $("#viz_options li").each(function () {
+
+      // Get the inner anchor tag and extract the href value (removing leading and trailing slashes)
+      var href = $(this).find('a').attr('href').replace(/\/$/, "").replace(/^\//, "")
+
+      // If the link path and URL path match, set the class name
+      if(path === href) $(this).addClass('selected')
+
+    });
+
+    $('.main-menu').append($('.menuoptions'));
+
+    // $('.selectize').selectize({ });
+
+    // Make the menu items
+    $("#cssmenu").menumaker({
+        title: siteTitle,
+        siteLogoUrl: siteLogoUrl,
+        format: "multitoggle"
+    });
+  });
+</script>
+
+<!-- <div><button onclick="refreshData()">refresh data</button></div> -->
+
+</body>
+</html>

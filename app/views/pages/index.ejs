@@ -1,0 +1,84 @@
+<% include ../partials/header %>
+<!-- Our main content container-->
+<div class="container">
+    <div id="viz_container" class="z-depth-3"></div>
+</div>
+
+<li class="menuoptions">
+  <a><span class="label">Grouping </span><br><span class="setting"></span></a>
+  <select id="key1" class="key-selector selectize" onchange="refresh(this)">
+    <option>None</option>
+  </select>
+</li>
+<li class="menuoptions">
+  <a><span class="label">Grouping </span><br><span class="setting"></span></a>
+  <select id="key2" class="key-selector selectize" onchange="refresh(this)">
+    <option>None</option>
+  </select>
+</li>
+<li class="menuoptions">
+  <a><span class="label">Grouping </span><br><span class="setting"></span></a>
+  <select id="key3" class="key-selector selectize" onchange="refresh(this)">
+    <option>None</option>
+  </select>
+</li>
+<li class="menuoptions">
+  <a><span class="label">Grouping </span><br><span class="setting"></span></a>
+  <select id="key4" class="key-selector selectize" onchange="refresh(this)">
+    <option>None</option>
+  </select>
+</li>
+<li class="menuoptions">
+  <a><span class="label">Grouping </span><br><span class="setting"></span></a>
+  <select id="key5" class="key-selector selectize" onchange="refresh(this)">
+    <option>None</option>
+  </select>
+</li>
+
+
+
+<script>
+    //Once the document is ready we set javascript and page settings
+    var screenWidth;
+    var screenHeight;
+
+    $(document).ready(function () {
+
+        var rect;
+        if (self==top) {
+            rect = document.body.getBoundingClientRect();
+        }
+        else {
+            rect =  parent.document.body.getBoundingClientRect();
+        }
+
+        // $('#key1').selectize({
+        //     sortField: 'text'
+        // });
+
+        //Set display size based on window size.
+        screenWidth = (rect.width < 960) ? Math.round(rect.width*.95) : Math.round((rect.width) *.97);
+
+        screenHeight=850;
+
+        d3.select("#currentDisplay")
+                .attr("item_value", (String(screenWidth) + "," + String(screenHeight)))
+                .attr("class", "selected")
+                .html("<a>" + screenWidth + "px - " + screenHeight + "px</a>");
+
+        // Set the size of our container element.
+        viz_container = d3.selectAll("#viz_container")
+                .style("width", screenWidth + "px")
+                .style("height", screenHeight + "px");
+
+        // $('#key1').selectize({
+        //     sortField: 'text'
+        // });
+        refreshData(true);
+
+
+    });
+
+</script>
+
+<% include ../partials/footer %>

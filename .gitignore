@@ -1,0 +1,4 @@
+app/data
+run.sh
+.DS_Store
+node_modules/

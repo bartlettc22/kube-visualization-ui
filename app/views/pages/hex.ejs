@@ -1,0 +1,20 @@
+<% include ../partials/header %>
+
+  <li class="menuoptions">
+    <a><span class="label">Pod Hex Options </span><br><span class="setting"></span></a>
+    <ul id="hex_options" class="options" callback="refresh">
+      <li item_value="restarts" class="selected"><a>Container Restarts</a></li>
+      <li item_value="ready"><a>Pods Ready</a></li>
+    </ul>
+  </li>
+
+  <div id="hex-chart"></div>
+
+	<script type="text/javascript" src="js/hex.js"></script>
+  <script>
+    $(document).ready(function () {
+      refreshData()
+    });
+  </script>
+
+<% include ../partials/footer %>
