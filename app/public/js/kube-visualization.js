@@ -74,9 +74,9 @@ function buildFlattenedData() {
   autoscalinggroups = getType("aws.autoscalinggroup")
   instances = getType("aws.instance")
 
-  console.log("dnsrecords", dnsrecords);
+  // console.log("dnsrecords", dnsrecords);
   // console.log("endpoints", endpoints);
-  console.log("dnsrecordtargets", dnsrecordtargets);
+  // console.log("dnsrecordtargets", dnsrecordtargets);
 
 
   kubernetes_group = leftjoin(containers, function (o) { return o.joindata["kubernetes.container.podUid"]; }, pods, function (o) { return o.metadata["kubernetes.pod.uid"]; });
@@ -221,80 +221,22 @@ function buildFlattenedData() {
 function prepDataJson() {
 
     var keys = getKeyList();
-    // var sortedTypes = getSortedTypes(keys);
-    console.log("Keys", keys);
-    // console.log("Sorted Types", sortedTypes);
+    // console.log("Keys", keys);
 
-    // for(var i=0;i<sortedTypes.length-1;i++) {
-    //   type = sortedTypes[i]
-    //   console.log(find_join(type, sortedTypes[i+1], join_tree, [], []));
-    // }
-
-
-    // joined_base_types = [];
-    // joined_data = {};
-    // previous_base_type = "";
-    // levels.forEach(function(k,v) {
-    //   previous_base_type = base_type;
-    //   base_type = k.replace(/(\w+\.\w+).*/i, '$1');
-    //   if(previous_base_type) {
-    //     // second level
-    //   }
-    //   // switch(base_type) {
-    //   //   case "":
-    //   //
-    //   // }
-    //   console.log(base_type);
-    //   console.log(join_map[base_type]);
-    // });
-
-    // loadbalancers = $.map(resource_data_list, function(e) { if(e["kubernetes.kind"] === "LoadBalancer") return e; return undefined; });
-    // asgs = $.map(resource_data_list, function(e) { if(e["kubernetes.kind"] === "AutoscalingGroup") return e; return undefined; });
-    // tgs = $.map(resource_data_list, function(e) { if(e["kubernetes.kind"] === "TargetGroup") return e; return undefined; });
-    //
-    // // Classic Load Balancing
-    // asgs.forEach(function(v,k) {
-    //   lbnames = asgs[k]["aws.autoscalinggroup.LoadBalancerNames"];
-    //   for(i in lbnames) {
-    //     loadbalancers = _.hashLeftOuterJoin(loadbalancers, function (o) { return o["aws.loadbalancer.name"]; }, [asgs[k]], function (o) { return lbnames[i]; });
-    //   }
-    // });
-    //
-    // // V2 Load Balancers
-    // asgs.forEach(function(v,k) {
-    //   tg_arns = asgs[k]["aws.autoscalinggroup.TargetGroupARNs"];
-    //   for(i in tg_arns) {
-    //     tgs.forEach(function(v2,k2) {
-    //       if(tgs[k2]["aws.targetgroup.arn"] == tg_arns[i]) {
-    //         tgs[k2]["aws.targetgroup.LoadBalancerArns"].forEach(function(v3,k3) {
-    //           loadbalancers = _.hashLeftOuterJoin(loadbalancers, function (o) { return o["aws.loadbalancer.arn"]; }, [asgs[k]], function (o) { return v3; });
-    //           loadbalancers = _.hashLeftOuterJoin(loadbalancers, function (o) { return o["aws.loadbalancer.arn"]; }, [tgs[k2]], function (o) { return v3; });
-    //         });
-    //       }
-    //     });
-    //
-    //   }
-    // });
-
-    // loadbalancers = _.hashLeftOuterJoin(pods, function (o) { return o["kubernetes.pod.createdByUid"]; }, asgs, function (o) { return o["aws.autoscalinggroup.replicaset.uid"]; });
-    // console.log("loadbalancers", loadbalancers);
+    // Apply filter to working data
+    setFilter($('#wt_filter').val())
+    workingDataset = applyFilter(flattened_data, $('#wt_filter').val());
 
     // returns a new object
-    workingDataset = deKeyData(flattened_data, keys)
+    workingDataset = deKeyData(workingDataset, keys)
     console.log("deKeyedData", JSON.parse(JSON.stringify(workingDataset)));
     deDupeData(workingDataset);
     console.log("deDupedData", JSON.parse(JSON.stringify(workingDataset)));
 
-    // deDupeData = deKeyData(flattened_data, keys);
-    // console.log("deKeyedData", JSON.parse(JSON.stringify(deKeyedData)));
-
+    // For each key selected, add the type template if a value doesn't already exist
     workingDataset = $.map(workingDataset, function(e) {
-      // For each key selected, add the type template if a value doesn't already exist
-      // console.log(JSON.parse(JSON.stringify(e)));
       for(i=0;i<keys.length;i++) {
         if(!(keys[i] in e)) {
-          // console.log("Extending "+keys[i]+" for "+e["aws.dnsrecord.name"])
-
           $.extend(e, typeTemplates[getKeyType(keys[i])])
         }
       }
@@ -305,9 +247,6 @@ function prepDataJson() {
 
     console.log("missingKeysAdded", JSON.parse(JSON.stringify(workingDataset)));
 
-    // flattened_data = flattened_data.filter(filterData)
-    //
-    // console.log("flattened_data_filtered", JSON.parse(JSON.stringify(flattened_data)));
     var values=[];
     values = workingDataset;
 
@@ -320,35 +259,8 @@ function prepDataJson() {
       };
     }
     nest = nest.entries(values);
-        // .key(function (d) {
-        //     return d[keys[0]];
-        // }).key(function (d) {
-        //     return d[keys[1]];
-        // }).key(function (d) {
-        //     return d[keys[2]];
-        // }).entries(values);
-    // nest = d3.nest();
-    //
-
-
-    // } else {
-    //   nest = nest.entries([{"foo": "bar", "depth": 1, "id": "0"}]);
-    //   // return nest;
-    // }
-    // console.log("nest done");
-
-    // return;
-        // .key(function (d) {
-        //     return d[rollupFields[0]];
-        // })
-        // .key(function (d) {
-        //     return d[rollupFields[1]];
-        // })
-        // .key(function (d) {
-        //     return d[rollupFields[2]];
-        // })
-        // .entries(values);
     console.log("nest", nest);
+
     //This will be a viz.data function;
     vizuly.core.util.aggregateNest(nest, ["value"], function (a, b) {
         return Number(a) + Number(b);
@@ -389,8 +301,6 @@ function createNestingFunction(propertyName){
 
 function createNestingFunction2(propertyName){
   return function(d){
-            // return d[propertyName];
-            // console.log(d.depth)
             return trimLabel(d.key || d[keys[keys.length - 1]])
          };
 }
@@ -398,124 +308,142 @@ function createNestingFunction2(propertyName){
 function initialize() {
 
 
-
-
     viz = vizuly.viz.weighted_tree(document.getElementById("viz_container"));
-
-    //Here we create three vizuly themes for each radial progress component.
-    //A theme manages the look and feel of the component output.  You can only have
-    //one component active per theme, so we bind each theme to the corresponding component.
     theme = vizuly.theme.weighted_tree(viz).skin(vizuly.skin.WEIGHTED_TREE_AXIIS);
-
-    //Like D3 and jQuery, vizuly uses a function chaining syntax to set component properties
-    //Here we set some bases line properties for all three components.
     viz.data(data)                                                      // Expects hierarchical array of objects.
-        .width(600)                                                     // Width of component
-        .height(600)                                                    // Height of component
+        .width("100%")                                                     // Width of component
+        .height(screenHeight)                                                    // Height of component
         .children(function (d) { return d.values })                     // Denotes the property that holds child object array
         .key(function (d) { return d.id })                              // Unique key
         .value(function (d) { return d["agg_value"]; })
-        // .value(function (d) {
-            // return Number(d["agg_" + valueField]) })                    // The property of the datum that will be used for the branch and node size
         .fixedSpan(-1)                                                  // fixedSpan > 0 will use this pixel value for horizontal spread versus auto size based on viz width
         .branchPadding(.07)
         .label(createNestingFunction2("foo"))
-          // function (d) {
-          // levels = getKeyList();
-          // createNestingFunction(keys[i])
-          // // console.log(d);    // returns label for each node. Uses the level's key as the name unless it's the last item, then uses the Level# attribute
-          // console.log("setting label" + d.key)
-          //
-          // return trimLabel(d.key || d[keys[keys.length - 1]])})
         .on("measure",onMeasure)                                        // Make any measurement changes
         .on("mouseover",onMouseOver)                                    // mouseover callback - all viz components issue these events
         .on("mouseout",onMouseOut)                                      // mouseout callback - all viz components issue these events
-        .on("click",onClick);                                           // mouseout callback - all viz components issue these events
+        .on("click",onClick)
+        ;                                           // mouseout callback - all viz components issue these events
+    //     // Open up some of the tree branches.
+    //     // viz.toggleNode(data.values[2]);
+    //     // viz.toggleNode(data.values[2].values[0]);
+    //     // viz.toggleNode(data.values[3]);
 
+
+    // svg = d3.select("svg").call(d3.behavior.zoom().on("zoom", function () {
+    // svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+    // }))
 
     //We use this function to size the components based on the selected value from the RadiaLProgressTest.html page.
-    changeSize(d3.select("#currentDisplay").attr("item_value"));
+    // changeSize(d3.select("#currentDisplay").attr("item_value"));
+    changeSize(screenWidth+","+screenHeight);
 
-    // Open up some of the tree branches.
-    // viz.toggleNode(data.values[2]);
-    // viz.toggleNode(data.values[2].values[0]);
-    // viz.toggleNode(data.values[3]);
+}
 
+function zoomed() {
+  context.save();
+  context.clearRect(0, 0, width, height);
+  context.translate(d3.event.transform.x, d3.event.transform.y);
+  context.scale(d3.event.transform.k, d3.event.transform.k);
+  // drawPoints();
+  context.restore();
 }
 
 function getDescriptionByType(type, data) {
 
+  if(data.childProp_keys) {
+    prefix="childProp_"
+  } else {
+    prefix=""
+  }
   // console.log(type);
   switch(type) {
     case "kops.cluster":
       return makeDescription({
-        "Cluster Name": data["childProp_kops.cluster.name"],
-        "Version": data["childProp_kops.cluster.version"],
-        "Topology": data["childProp_kops.cluster.topology"],
-        "Created": data["childProp_kops.cluster.created"]
+        "Cluster Name": data[prefix+"kops.cluster.name"],
+        "Version": data[prefix+"kops.cluster.version"],
+        "Topology": data[prefix+"kops.cluster.topology"],
+        "Created": data[prefix+"kops.cluster.created"]
       })
     case "kubernetes.node":
       return makeDescription({
-        "Name": data["childProp_kubernetes.node.name"],
-        "Region": data["childProp_kubernetes.node.region"],
-        "Availability Zone": data["childProp_kubernetes.node.az"],
-        "Role": data["childProp_kubernetes.node.role"],
-        "Public IP": data["childProp_kubernetes.node.publicIp"],
-        "Private IP": data["childProp_kubernetes.node.privateIp"],
-        "Machine Type": data["childProp_kubernetes.node.machineType"],
-        "Kernel Version": data["childProp_kubernetes.node.kernelVersion"],
-        "OS Image": data["childProp_kubernetes.node.osImage"],
-        "Cluster": data["childProp_kubernetes.node.cluster"],
-        "Created": data["childProp_kubernetes.node.created"]
+        "Name": data[prefix+"kubernetes.node.name"],
+        "Region": data[prefix+"kubernetes.node.region"],
+        "Availability Zone": data[prefix+"kubernetes.node.az"],
+        "Role": data[prefix+"kubernetes.node.role"],
+        "Public IP": data[prefix+"kubernetes.node.publicIp"],
+        "Private IP": data[prefix+"kubernetes.node.privateIp"],
+        "Machine Type": data[prefix+"kubernetes.node.machineType"],
+        "Kernel Version": data[prefix+"kubernetes.node.kernelVersion"],
+        "OS Image": data[prefix+"kubernetes.node.osImage"],
+        "Cluster": data[prefix+"kubernetes.node.cluster"],
+        "Created": data[prefix+"kubernetes.node.created"]
+      })
+    case "kubernetes.replicaset":
+      return makeDescription({
+        "Name": data[prefix+"kubernetes.replicaset.name"],
+        "Cluster": data[prefix+"kubernetes.replicaset.cluster"],
+        "Namespace": data[prefix+"kubernetes.replicaset.namespace"],
+        "Created": data[prefix+"kubernetes.replicaset.created"]
       })
     case "kubernetes.deployment":
       return makeDescription({
-        "Name": data["childProp_kubernetes.deployment.name"],
-        "Replicas": data["childProp_kubernetes.deployment.replicas"],
-        "Available Replicas": data["childProp_kubernetes.deployment.availableReplicas"],
-        "Cluster": data["childProp_kubernetes.deployment.cluster"],
-        "Namespace": data["childProp_kubernetes.deployment.namespace"],
-        "Created": data["childProp_kubernetes.deployment.created"]
+        "Name": data[prefix+"kubernetes.deployment.name"],
+        "Replicas": data[prefix+"kubernetes.deployment.replicas"],
+        "Available Replicas": data[prefix+"kubernetes.deployment.availableReplicas"],
+        "Cluster": data[prefix+"kubernetes.deployment.cluster"],
+        "Namespace": data[prefix+"kubernetes.deployment.namespace"],
+        "Created": data[prefix+"kubernetes.deployment.created"]
       })
     case "kubernetes.statefulset":
       return makeDescription({
-        "Name": data["childProp_kubernetes.statefulset.name"],
-        "Replicas": data["childProp_kubernetes.statefulset.replicas"],
-        "Ready Replicas": data["childProp_kubernetes.statefulset.readyReplicas"],
-        "Cluster": data["childProp_kubernetes.statefulset.cluster"],
-        "Namespace": data["childProp_kubernetes.statefulset.namespace"],
-        "Created": data["childProp_kubernetes.statefulset.created"]
+        "Name": data[prefix+"kubernetes.statefulset.name"],
+        "Replicas": data[prefix+"kubernetes.statefulset.replicas"],
+        "Ready Replicas": data[prefix+"kubernetes.statefulset.readyReplicas"],
+        "Cluster": data[prefix+"kubernetes.statefulset.cluster"],
+        "Namespace": data[prefix+"kubernetes.statefulset.namespace"],
+        "Created": data[prefix+"kubernetes.statefulset.created"]
       })
     case "kubernetes.daemonset":
       return makeDescription({
-        "Name": data["childProp_kubernetes.daemonset.name"],
-        "Cluster": data["childProp_kubernetes.daemonset.cluster"],
-        "Namespace": data["childProp_kubernetes.daemonset.namespace"],
-        "Created": data["childProp_kubernetes.daemonset.created"]
+        "Name": data[prefix+"kubernetes.daemonset.name"],
+        "Cluster": data[prefix+"kubernetes.daemonset.cluster"],
+        "Namespace": data[prefix+"kubernetes.daemonset.namespace"],
+        "Created": data[prefix+"kubernetes.daemonset.created"]
       })
     case "kubernetes.service":
       return makeDescription({
-        "Service Name": data["childProp_kubernetes.service.name"],
-        "Service Type": data["childProp_kubernetes.service.type"],
-        "Cluster IP": data["childProp_kubernetes.service.clusterIP"],
-        "Cluster": data["childProp_kubernetes.service.cluster"],
-        "Namespace": data["childProp_kubernetes.service.namespace"]
+        "Service Name": data[prefix+"kubernetes.service.name"],
+        "Service Type": data[prefix+"kubernetes.service.type"],
+        "Cluster IP": data[prefix+"kubernetes.service.clusterIP"],
+        "Cluster": data[prefix+"kubernetes.service.cluster"],
+        "Namespace": data[prefix+"kubernetes.service.namespace"]
       })
     case "kubernetes.pod":
       return makeDescription({
-        "Pod IP": data["childProp_kubernetes.pod.podIP"],
-        "Host Network": data["childProp_kubernetes.pod.hostNetwork"],
-        "Cluster": data["childProp_kubernetes.pod.cluster"],
-        "Namespace": data["childProp_kubernetes.pod.namespace"],
-        "Node": data["childProp_kubernetes.pod.node"]
+        "Name": data[prefix+"kubernetes.pod.name"],
+        "Pod IP": data[prefix+"kubernetes.pod.podIP"],
+        "Host Network": data[prefix+"kubernetes.pod.hostNetwork"],
+        "Cluster": data[prefix+"kubernetes.pod.cluster"],
+        "Namespace": data[prefix+"kubernetes.pod.namespace"],
+        "Node": data[prefix+"kubernetes.pod.node"]
       })
     case "kubernetes.container":
       return makeDescription({
-        "Image": data["childProp_kubernetes.container.image"],
-        "Pod IP": data["childProp_kubernetes.container.podIP"],
-        "Cluster": data["childProp_kubernetes.container.cluster"],
-        "Namespace": data["childProp_kubernetes.container.namespace"],
-        "Node": data["childProp_kubernetes.container.node"],
+        "Image": data[prefix+"kubernetes.container.image"],
+        "Pod IP": data[prefix+"kubernetes.container.podIP"],
+        "Cluster": data[prefix+"kubernetes.container.cluster"],
+        "Namespace": data[prefix+"kubernetes.container.namespace"],
+        "Node": data[prefix+"kubernetes.container.node"],
+      })
+    case "kubernetes.containerendpoint":
+      return makeDescription({
+        "Endpoint": data[prefix+"kubernetes.containerendpoint.endpoint"]
+      })
+    case "kubernetes.namespace":
+      return makeDescription({
+        "Name": data[prefix+"kubernetes.namespace.name"],
+        "Cluster": data[prefix+"kubernetes.namespace.cluster"]
       })
     case "cluster":
       return '<div class="Rtable Rtable--2cols">'+
@@ -556,43 +484,48 @@ function getDescriptionByType(type, data) {
             '</div>';
     case "aws.dnsrecord":
       return makeDescription({
-        "Type": data["childProp_aws.dnsrecord.type"],
-        "TTL": data["childProp_aws.dnsrecord.ttl"]
+        "Type": data[prefix+"aws.dnsrecord.type"],
+        "TTL": data[prefix+"aws.dnsrecord.ttl"]
       })
     case "aws.loadbalancer":
       return makeDescription({
-        "Type": data["childProp_aws.loadbalancer.type"],
-        "Scheme": data["childProp_aws.loadbalancer.scheme"],
-        "Created": data["childProp_aws.loadbalancer.createdTime"]
+        "Type": data[prefix+"aws.loadbalancer.type"],
+        "Scheme": data[prefix+"aws.loadbalancer.scheme"],
+        "Created": data[prefix+"aws.loadbalancer.createdTime"]
       })
     case "aws.loadbalancerlistener":
       return makeDescription({
-        "Protocol": data["childProp_aws.loadbalancerlistener.protocol"],
-        "Port": data["childProp_aws.loadbalancerlistener.port"],
-        "Attached Certs": (data["childProp_aws.loadbalancerlistener.numCerts"] || 0),
-        "Instance Protocol": data["childProp_aws.loadbalancerlistener.instanceProtocol"],
-        "Instance Port": data["childProp_aws.loadbalancerlistener.instancePort"]
+        "Protocol": data[prefix+"aws.loadbalancerlistener.protocol"],
+        "Port": data[prefix+"aws.loadbalancerlistener.port"],
+        "Attached Certs": (data[prefix+"aws.loadbalancerlistener.numCerts"] || 0),
+        "Instance Protocol": data[prefix+"aws.loadbalancerlistener.instanceProtocol"],
+        "Instance Port": data[prefix+"aws.loadbalancerlistener.instancePort"]
       })
     case "aws.listenerrule":
       return makeDescription({
-        "Priority": data["childProp_aws.listenerrule.priority"]
+        "Priority": data[prefix+"aws.listenerrule.priority"]
       })
     case "aws.targetgroup":
       return makeDescription({
-        "Protocol": data["childProp_aws.targetgroup.protocol"],
-        "Port": data["childProp_aws.targetgroup.port"]
+        "Protocol": data[prefix+"aws.targetgroup.protocol"],
+        "Port": data[prefix+"aws.targetgroup.port"]
       })
     case "aws.autoscalinggroup":
       return makeDescription({
-        "Desired Capacity": data["childProp_aws.autoscalinggroup.desiredCapacity"],
-        "Min Size": data["childProp_aws.autoscalinggroup.minSize"],
-        "Max Size": data["childProp_aws.autoscalinggroup.maxSize"]
+        "Desired Capacity": data[prefix+"aws.autoscalinggroup.desiredCapacity"],
+        "Min Size": data[prefix+"aws.autoscalinggroup.minSize"],
+        "Max Size": data[prefix+"aws.autoscalinggroup.maxSize"]
       })
     case "aws.instance":
       return makeDescription({
-        "Instance Type": data["childProp_aws.instance.instanceType"],
-        "Private IP": data["childProp_aws.instance.privateIpAddress"],
-        "Launch Time": data["childProp_aws.instance.launchTime"]
+        "Instance Type": data[prefix+"aws.instance.instanceType"],
+        "Private IP": data[prefix+"aws.instance.privateIpAddress"],
+        "Launch Time": data[prefix+"aws.instance.launchTime"]
+      })
+    case "aws.region":
+      return makeDescription({
+        "Name": data[prefix+"aws.region.name"],
+        "Locale": data[prefix+"aws.region.locale"]
       })
   }
 
@@ -607,18 +540,18 @@ function trimLabel(label) {
 
 var datatip='<div class="tooltip" style="width: 250px; background-opacity:.5">' +
     '<div class="header1">HEADER1</div>' +
-    '<div class="header-rule"></div>' +
-    '<div class="header2"> HEADER2 </div>' +
+    // '<div class="header-rule"></div>' +
+    // '<div class="header2"> HEADER2 </div>' +
     '<div class="header-rule"></div>' +
     '<div class="header3"> HEADER3 </div>' +
     '</div>';
 
 // This function uses the above html template to replace values and then creates a new <div> that it appends to the
 // document.body.  This is just one way you could implement a data tip.
-function createDataTip(x,y,h1,h2,h3) {
+function createDataTip(x,y,h1,h3) {
 
     var html = datatip.replace("HEADER1", h1);
-    html = html.replace("HEADER2", h2);
+    // html = html.replace("HEADER2", h2);
     html = html.replace("HEADER3", h3);
 
     d3.select("body")
@@ -637,24 +570,36 @@ function onMeasure() {
    // viz.tree().nodeSize([100,0]);
 }
 
-// e = weightedTreeNode element
-// d = node dataum
-// i = some sort of index, not sure
 function onMouseOver(e,d,i) {
-    //console.log(e,d,i)
-    // //console.log("mouse over");
+
     if (d == data) return;
     var rect = e.getBoundingClientRect();
     if (d.target) d = d.target; //This if for link elements
-    // //console.log(d)
-    // createDataTip(rect.left, (rect.top+viz.height() *.05), (d.key || (d['Level' + d.depth])), "Kubernetes Version: 1.8<br>Node Count: 5<br>Topology: Public" ,(d["TestField"]));
-    // console.log("depth", d.depth)
-    createDataTip(rect.left,
-                  (rect.top+viz.height() *.05),
-                  getKeyType(d.childProp_keys[d.depth-1] || d.keys[d.depth-1]), // Resource Type
-                  (d.key || d[d.keys[d.depth-1]]), // Resource Name
-                  getDescriptionByType(getKeyType((d.childProp_keys[d.depth-1] || d.keys[d.depth-1])), d) // Resource Description
-                )
+
+    // This craziness is to deal with the different types of data aggregation
+    if(d.childProp_keys) {
+      if(Array.isArray(d.childProp_keys[0])) {
+        resource_type = getKeyType(d.childProp_keys[0][d.depth-1])
+        description = getDescriptionByType(getKeyType(d.childProp_keys[0][d.depth-1]), d)
+      } else {
+        resource_type = getKeyType(d.childProp_keys[d.depth-1] || d.keys[d.depth-1])
+        description = getDescriptionByType(getKeyType(d.childProp_keys[d.depth-1]), d)
+      }
+    } else {
+      resource_type = getKeyType(d.keys[d.depth-1])
+      description = getDescriptionByType(getKeyType(d.keys[d.depth-1]), d)
+    }
+
+    // Position path tooltips differently than points(g)
+    if(e.tagName === "path") {
+      x = rect.right
+      y = rect.top+viz.height() *.05
+    } else {
+      x = rect.left
+      y = rect.top+viz.height() *.05
+    }
+
+    createDataTip(x, y, resource_type, description);
 }
 
 function onMouseOut(e,d,i) {
@@ -668,30 +613,77 @@ function onClick(g,d,i) {
 
 //This changes the size of the component by adjusting the width/height;
 function changeSize(val) {
+  console.log("changing size to ", val);
     var s = String(val).split(",");
     viz_container.transition().duration(300).style('width', s[0] + 'px').style('height', s[1] + 'px');
-    viz.width(s[0]).height(s[1]*.8).update();
+    // viz.width(s[0]).height(s[1]*.8).update();
+    viz.width(s[0]).height(s[1]).update();
 }
 
 //This sets the same value for each radial progress
-function changeData(val) {
-    valueField=valueFields[Number(val)];
-    viz.update();
-}
+// function changeData(val) {
+//     valueField=valueFields[Number(val)];
+//     viz.update();
+// }
 
-function refresh() {
-  console.log("refreshing...");
+function refresh(dirtyDepth) {
+  console.log("refreshing (depth "+dirtyDepth+" is dirty)");
   // d3.json("data/data.json", function (json) {
 
   // Clear the chart
   // $('#viz_container').children().remove();
 
     data.values=prepDataJson();
+    // viz.toggleNode(d3.select('.vz-id-undefined'))
     viz.data(data);
-    viz.update(true);
-    viz.toggleNode(data.values[0]);
-    viz.toggleNode(data.values[1]);
-    viz.toggleNode(data.values[2]);
+    viz.update(true,dirtyDepth);
+    // viz.toggleNode(data.values[0]);
+    // viz.toggleNode(data.values[1]);
+    // viz.toggleNode(data.values[2]);
   // });
 
+}
+
+function setFilter(filterValue) {
+  // console.log("setting filter", filterValue);
+  document.cookie = "filter="+filterValue
+  filter = filterValue;
+}
+
+function applyFilter(datum, filterValue) {
+
+  // console.log("Applying filter", filterValue);
+
+  parsed_filters = [];
+  parsed_filters = filterValue.split(",")
+  parsed_filters.forEach(function(v, k) {
+    parsed_filters[k] = v.split("=");
+  })
+  // console.log("Parsed Filter", parsed_filters);
+
+  var result = []
+
+  $.map(datum, function (e) {
+
+    // Deep copy of entry
+    var entry = $.extend(true, {}, e)
+
+    filtered = false
+    for(var i=0,ilen=parsed_filters.length; i<ilen; i++) {
+      // for(var j=0,jlen=parsed_filters[i].length; j<ilen; j++) {
+        if(entry[parsed_filters[i][0]] != parsed_filters[i][1]) {
+          filtered = true
+        }
+      // }
+    }
+
+    if(!filtered) {
+      result.push(entry);
+    }
+    // if(entry[eval(parsed_filter[0])] == parsed_filter[1]) {
+    //   result.push(entry)
+    // }
+  });
+
+  return result;
 }

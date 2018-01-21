@@ -1,0 +1,56 @@
+<% include ../partials/header %>
+
+<div class="stats-container">
+  <div id="stats-table" class="Rtable Rtable--7cols">
+    <div class="Rtable-cell cell-head stat-cluster">Cluster</div>
+    <div class="Rtable-cell cell-head stat-agent-version">Agent Version</div>
+    <div class="Rtable-cell cell-head stat-run-interval">Run Interval</div>
+    <div class="Rtable-cell cell-head stat-last-run">Last Run</div>
+    <div class="Rtable-cell cell-head stat-query-time">Query Duration</div>
+    <div class="Rtable-cell cell-head stat-num-records">Record Count</div>
+    <div class="Rtable-cell cell-head stat-errors">Errors</div>
+  </div>
+
+  <div class="stats-template Rtable Rtable--7cols">
+    <div class="Rtable-cell stat-cluster"></div>
+    <div class="Rtable-cell stat-agent-version"></div>
+    <div class="Rtable-cell stat-run-interval"></div>
+    <div class="Rtable-cell stat-last-run"></div>
+    <div class="Rtable-cell stat-query-time"></div>
+    <div class="Rtable-cell stat-num-records"></div>
+    <div class="Rtable-cell stat-errors"></div>
+  </div>
+</div>
+
+<script>
+
+  $(document).ready(function () {
+    d3.json('/statsdata')
+    // d3.json('/staticdata')
+      .get(function (error, json) {
+        for(cluster in json) {
+          var html = $('.stats-template').clone()
+          // html = html.find('.stats-template').html()
+
+          html.find('.stat-cluster').html(cluster)
+          html.find('.stat-agent-version').html(json[cluster].agent_version)
+          html.find('.stat-run-interval').html(json[cluster].run_interval)
+          html.find('.stat-last-run').html(json[cluster].run_start)
+          html.find('.stat-query-time').html(json[cluster].query_time+" seconds")
+          html.find('.stat-num-records').html(json[cluster].num_records)
+          html.find('.stat-errors').html('<span class="error-link">Last Run Errors</span>')
+          html.find('.error-link').attr("title", json[cluster].errors)
+          $('#stats-table').append(html.children());
+        }
+      });
+    });
+
+    tippy('.error-link', {
+      placement: 'right',
+      duration: 0,
+      arrow: true
+    })
+
+</script>
+
+<% include ../partials/footer %>

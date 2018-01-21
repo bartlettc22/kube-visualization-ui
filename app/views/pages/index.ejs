@@ -1,39 +1,49 @@
 <% include ../partials/header %>
-<!-- Our main content container-->
+
 <div class="container">
     <div id="viz_container" class="z-depth-3"></div>
 </div>
 
-<li class="menuoptions">
+<li class="menuoptions dropdown">
   <a><span class="label">Grouping </span><br><span class="setting"></span></a>
-  <select id="key1" class="key-selector selectize" onchange="refresh(this)">
+  <select id="key1" class="key-selector selectize" onchange="refresh(1)">
     <option>None</option>
   </select>
 </li>
-<li class="menuoptions">
+<li class="menuoptions dropdown">
   <a><span class="label">Grouping </span><br><span class="setting"></span></a>
-  <select id="key2" class="key-selector selectize" onchange="refresh(this)">
+  <select id="key2" class="key-selector selectize" onchange="refresh(2)">
     <option>None</option>
   </select>
 </li>
-<li class="menuoptions">
+<li class="menuoptions dropdown">
   <a><span class="label">Grouping </span><br><span class="setting"></span></a>
-  <select id="key3" class="key-selector selectize" onchange="refresh(this)">
+  <select id="key3" class="key-selector selectize" onchange="refresh(3)">
     <option>None</option>
   </select>
 </li>
-<li class="menuoptions">
+<li class="menuoptions dropdown">
   <a><span class="label">Grouping </span><br><span class="setting"></span></a>
-  <select id="key4" class="key-selector selectize" onchange="refresh(this)">
+  <select id="key4" class="key-selector selectize" onchange="refresh(4)">
     <option>None</option>
   </select>
 </li>
-<li class="menuoptions">
+<li class="menuoptions dropdown">
   <a><span class="label">Grouping </span><br><span class="setting"></span></a>
-  <select id="key5" class="key-selector selectize" onchange="refresh(this)">
+  <select id="key5" class="key-selector selectize" onchange="refresh(5)">
     <option>None</option>
   </select>
 </li>
+
+<ul class="menubar">
+  <li>
+    <!-- <button onclick="collapseTree(0)">Collapse 1</button>
+    <button onclick="collapseTree(1)">Collapse 2</button>
+    <button onclick="collapseTree(2)">Collapse 2</button> -->
+    Filter: <input id="wt_filter" />
+    <button onclick="refresh()">refresh</button>
+  </li>
+</ul>
 
 
 
@@ -52,20 +62,17 @@
             rect =  parent.document.body.getBoundingClientRect();
         }
 
-        // $('#key1').selectize({
-        //     sortField: 'text'
-        // });
-
         //Set display size based on window size.
-        screenWidth = (rect.width < 960) ? Math.round(rect.width*.95) : Math.round((rect.width) *.97);
+        screenWidth = (rect.width < 960) ? Math.round(rect.width*.95) : Math.round((rect.width) *.95);
 
-        screenHeight=850;
+        screenHeight=$('.box .row.content').height()//850;
+        // console.log(screenHeight);
 
-        d3.select("#currentDisplay")
-                .attr("item_value", (String(screenWidth) + "," + String(screenHeight)))
-                .attr("class", "selected")
-                .html("<a>" + screenWidth + "px - " + screenHeight + "px</a>");
-
+        // d3.select("#currentDisplay")
+        //         .attr("item_value", (String(screenWidth) + "," + String(screenHeight)))
+        //         .attr("class", "selected")
+        //         .html("<a>" + screenWidth + "px - " + screenHeight + "px</a>");
+        // console.log("dimension", screenWidth, screenHeight);
         // Set the size of our container element.
         viz_container = d3.selectAll("#viz_container")
                 .style("width", screenWidth + "px")

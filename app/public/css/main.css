@@ -41,7 +41,7 @@ body {
 div.container {
     width:100%;
     position:absolute;
-    top:100px;
+    top:300px;
 }
 
 .tile {
@@ -235,25 +235,33 @@ i.mdi-navigation-menu:hover {
   padding: 5px;
 }
 
+.Rtable, .Rtable > .Rtable-cell {
+  border-style: solid;
+  border-color: rgba(0,0,0,.3);
+}
+
 .Rtable {
   display: flex;
   flex-wrap: wrap;
   margin: 0 0 3em 0;
+  border-width: 1px 0 0 1px;
 }
 .Rtable-cell {
   box-sizing: border-box;
   flex-grow: 1;
-  width: 100%;  // Default to full width
-  padding: 0.8em 1.2em;
-  overflow: hidden; // Or flex might break
+  width: 100%;
+  padding: 6px;
+  overflow: hidden;
   list-style: none;
-  border: solid @bw white;
-  background: fade(slategrey,20%);
+  border-width: 0 1px 1px 0;
+  /* border: solid @bw white;
+  background: fade(slategrey,20%); */
   text-align:left
 }
 
 .Rtable-cell.cell-head {
   font-weight:bold;
+  background-color:#cbcbcb;
   text-align:right;
   padding-right:4px;
 }
@@ -262,6 +270,8 @@ i.mdi-navigation-menu:hover {
 ================================== */
 .Rtable--2cols > .Rtable-cell  { width: 55%; }
 .Rtable--2cols > .Rtable-cell.cell-head  { width: 45%; }
+
+.Rtable--7cols > .Rtable-cell  { width: 14%; }
 
 
 .flex-container {
@@ -310,4 +320,27 @@ i.mdi-navigation-menu:hover {
 
 .selectize-control.single .selectize-input, .selectize-dropdown.single {
   border:none;
+}
+
+
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.box .row {
+  /* border: 1px dotted grey; */
+}
+
+.box .row.header {
+  flex: 0 1 auto;
+  /* The above is shorthand for:
+  flex-grow: 0,
+  flex-shrink: 1,
+  flex-basis: auto
+  */
+}
+.box .row.content {
+  flex: 1 1 auto;
 }

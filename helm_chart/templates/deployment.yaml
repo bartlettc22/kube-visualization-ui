@@ -1,0 +1,39 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    component: {{ .Values.Ui.ComponentName }}
+    app: {{template "name" .}}
+spec:
+  replicas: {{ .Values.Ui.Replicas }}
+  template:
+    metadata:
+      name: {{ template "fullname" . }}
+      labels:
+        heritage: {{ .Release.Service }}
+        release: {{ .Release.Name }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        component: {{.Values.Ui.ComponentName}}
+        app: {{template "name" .}}
+    spec:
+      containers:
+      - name: {{ template "fullname" . }}
+        image: "{{.Values.Ui.Image}}:{{.Values.Ui.ImageTag}}"
+        imagePullPolicy: "{{.Values.Ui.ImagePullPolicy}}"
+        env:
+        - name: API_KEY
+          value: {{ .Values.Ui.ApiKey }}
+        - name: "API_URL"
+          value: "{{ .Values.Ui.ApiHostname }}"
+        - name: "SITE_TITLE"
+          value: "{{ .Values.Ui.SiteTitle }}"
+        - name: "SITE_LOGO_URL"
+          value: "{{ .Values.Ui.SiteLogoUrl }}"
+        ports:
+          - name: http
+            containerPort: 80
+            protocol: "TCP"

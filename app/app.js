@@ -18,19 +18,12 @@ app.get('/hex', function(req, res) {
   res.render('pages/hex', { siteTitle : process.env.SITE_TITLE, siteLogoUrl : process.env.SITE_LOGO_URL, apiEndpoint : process.env.API_URL });
 });
 
-app.get('/staticdata', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  var options = {
-    root: __dirname + '/'
-  };
-  res.sendFile('data/data.json', options, function(err){
-    if(err){
-        console.log(err);
-    }
-  });
+app.get('/stats', function(req, res) {
+  res.render('pages/stats', { siteTitle : process.env.SITE_TITLE, siteLogoUrl : process.env.SITE_LOGO_URL, apiEndpoint : process.env.API_URL });
 });
 
-app.get('/data', function(req, res) {
+app.get('/statsdata', function(req, res) {
+
   options = {
     "headers": {
       'X-KubeViz-Token': process.env.API_KEY,
@@ -38,7 +31,7 @@ app.get('/data', function(req, res) {
     },
     "json": true
   }
-  request(process.env.API_URL+"/data", options, (error, response, body) => {
+  request(process.env.API_URL+"/stats", options, (error, response, body) => {
     if (error) { return console.log(error); }
     if(response) {
       res.setHeader('Content-Type', 'application/json');
@@ -47,6 +40,37 @@ app.get('/data', function(req, res) {
       res.status(500).send("no response from backend")
     }
   });
+});
+
+app.get('/data', function(req, res) {
+  if(process.env.LOCAL_DATA) {
+    res.setHeader('Content-Type', 'application/json');
+    var options = {
+      root: __dirname + '/'
+    };
+    res.sendFile('data/data.json', options, function(err){
+      if(err){
+          console.log(err);
+      }
+    });
+  } else {
+    options = {
+      "headers": {
+        'X-KubeViz-Token': process.env.API_KEY,
+        'Content-Type': 'application/json'
+      },
+      "json": true
+    }
+    request(process.env.API_URL+"/data", options, (error, response, body) => {
+      if (error) { return console.log(error); }
+      if(response) {
+        res.setHeader('Content-Type', 'application/json');
+        res.status(res.statusCode).send(body)
+      } else {
+        res.status(500).send("no response from backend")
+      }
+    });
+  }
 });
 
 app.listen(80)

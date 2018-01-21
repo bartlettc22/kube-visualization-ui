@@ -1,0 +1,12 @@
+Ui:
+  ComponentName: kube-visualization-ui
+  Replicas: 3
+  Image: bartlettc/kube-visualization-ui
+  ImageTag: latest
+  ImagePullPolicy: Always
+  ApiHostname: "" # Example https://my-collector:8090
+  ApiKey: ""
+  HttpPort: 80
+  SiteTitle: "My Viz"
+  SiteLogoUrl: ""
+  IngressHost: ""

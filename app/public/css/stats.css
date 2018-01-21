@@ -1,0 +1,15 @@
+.stats-container {
+  padding:20px
+}
+#stats-table .Rtable-cell {
+  text-align:right;
+}
+
+#stats-table .error-link {
+  cursor: pointer;
+  color: blue
+}
+
+.stats-template {
+  display:none
+}

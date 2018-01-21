@@ -144,6 +144,7 @@ vizuly.viz.weighted_tree = function (parent) {
     viz.type="viz.chart.weighted_tree";
 
     var dataIsDirty=true;
+    var depthIsDirty=false;
     var refreshNeeded=false;
     viz.on("data_change.internal",onDataChanged);
 
@@ -225,11 +226,37 @@ vizuly.viz.weighted_tree = function (parent) {
                         d.children = null;
                     }
                 }
+
+
                 root.children.forEach(collapse);
+                // collapse(root)
+            }
+
+            if (depthIsDirty) {
+              console.log("Collapsing depth >= "+depthIsDirty)
+              function collapseToDepth(d) {
+                  // console.log(de,d);
+                  if(d.depth >= (depthIsDirty-1)) {
+                    console.log(""+d.key+" is dirty ("+d.depth+"), collapse it's children")
+                    if (d.children) {
+                        d._children = d.children;
+                        d._children.forEach(collapseToDepth);
+                        d.children = null;
+                    }
+                  } else {
+                    console.log(""+d.key+" is safe")
+                    if(d.children) {
+                      d.children.forEach(collapseToDepth);
+                    }
+                  }
+              }
+
+              root.children.forEach(collapseToDepth)
             }
             // Let anyone know we have just prepped data (themes, etc may need to adjust settings)
 
             dataIsDirty = false;
+            depthIsDirty = false;
             refreshNeeded = false;
             //scope.selection.selectAll(".vz-weighted_tree-node").remove();
         }
@@ -301,6 +328,7 @@ vizuly.viz.weighted_tree = function (parent) {
     }
 
     function onDataChanged() {
+      console.log("data changed");
         dataIsDirty=true;
 
     }
@@ -309,11 +337,12 @@ vizuly.viz.weighted_tree = function (parent) {
     // The update function is the primary function that is called when we want to render the visualiation based on
     // all of its set properties.  A developer can change properties of the components and it will not show on the screen
     // until the update function is called
-    function update(refresh) {
-
+    function update(dirtyDepth) {
+// dataIsDirty=true
+depthIsDirty=dirtyDepth
         // Call measure each time before we update to make sure all our our layout properties are set correctly
         measure();
-
+        // console.log("scope.dimentions", scope.width, scope.height);
         // Layout all of our primary SVG d3 elements.
         svg.attr("width", scope.width).attr("height", scope.height);
         background.attr("width", scope.width).attr("height", scope.height);
@@ -510,9 +539,9 @@ vizuly.viz.weighted_tree = function (parent) {
      *  @param {Boolean} refresh - Passing in a "TRUE" value will also refresh all data.
      *  @memberof vizuly.viz.weighted_tree
      */
-    viz.update = function (refresh) {
+    viz.update = function (refresh,depthIsDirty) {
         if (refresh == true) refreshNeeded=true;
-        update();
+        update(depthIsDirty);
         return viz;
     };
 

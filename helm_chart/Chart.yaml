@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Helm chart for Kubernetes Visualization UI deployment
+name: kube-visualization-ui
+version: 0.1.0

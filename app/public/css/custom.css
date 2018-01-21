@@ -5,7 +5,7 @@ body {
   font-size: 14px;
 }
 
-.header {
+/* .header {
   margin-top: 20px;
   margin-left: 20px;
   font-size: 36px;
@@ -13,7 +13,7 @@ body {
   display: block;
   z-index: 1;
   text-shadow: 0 1px 0 #fff;
-}
+} */
 .hint {
   width: 1280px;
   right: 0px;
@@ -40,10 +40,4 @@ body {
 
 .menuoptions {
   width:200px
-}
-
-.selectize-control.single .selectize-input {
-  box-shadow: none;
-  -webkit-box-shadow: none;
-  background: white;
 }

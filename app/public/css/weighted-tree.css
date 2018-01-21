@@ -1,0 +1,79 @@
+
+
+
+
+#cssmenu > ul > li.menuoptions.dropdown {
+  padding-right:0px;
+}
+
+#cssmenu > ul > li.menuoptions.dropdown select {
+  display:none
+}
+
+.selectize-control.single .selectize-input {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  background: white;
+}
+
+.selectize-control.single .selectize-input,
+.selectize-control.single .selectize-input.input-active {
+  background: none;
+}
+
+.selectize-input {
+  padding: 0px 8px;
+  color: #bbb;
+}
+
+.selectize-dropdown {
+  background: #333;
+  color: #ddd;
+}
+
+.selectize-input input {
+  color: #ddd;
+}
+
+.selectize-dropdown .active {
+  background: none;
+  color: white;
+}
+
+#cssmenu ul.menubar {
+  color:#bbb;
+  padding: 5px 15px;
+  border-top-style: solid;
+  border-top-color: #606060;
+  border-top-width: 2px;
+  z-index: -1000;
+}
+
+#cssmenu ul.menubar > li {
+  border:0
+}
+
+.menubar input {
+  font-size: 14px;
+  color: #bbb;
+  background: none;
+  border: 1px solid #999;
+  padding: 4px 10px;
+  width: 300px;
+  font-weight: 200;
+}
+
+.menubar button {
+  font-size: 14px;
+  color: #bbb;
+  background: none;
+  border: 1px solid #999;
+  padding: 4px 10px;
+  font-weight: 200;
+}
+
+
+div.container {
+  position: relative;
+  top: 0;
+}

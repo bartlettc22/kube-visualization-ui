@@ -231,7 +231,8 @@ function buildDataList(json) {
               "kubernetes.replicaset.uid": cluster+":"+e.metadata.uid,
               "kubernetes.replicaset.namespace": e.metadata.namespace,
               "kubernetes.replicaset.cluster": cluster,
-              "kubernetes.replicaset.createdByUid": cluster+":"+createdByUid
+              "kubernetes.replicaset.createdByUid": cluster+":"+createdByUid,
+              "kubernetes.replicaset.created": fmtDate(e.metadata.creationTimestamp)
             },
             "data": {
               "kubernetes.replicaset.name": e.metadata.name,

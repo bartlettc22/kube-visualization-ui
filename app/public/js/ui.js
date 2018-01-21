@@ -14,8 +14,23 @@ function populateKeySelectors(resource_data_list) {
   });
 
   // Set default keys
-  $('#key1').val('kubernetes.container.name');
-  $('#key2').val('kubernetes.service.name');
+  setViaCookie = false;
+  document.cookie.split(';').forEach(function(v,k) {
+    if(v.trim().startsWith("key")) {
+      setViaCookie = true;
+      parts = v.trim().split("=");
+      // console.log("setting "+parts[0]+" to "+parts[1]+" from cookie")
+      $('#'+parts[0]).val(parts[1]);
+    } else if(v.trim().startsWith("filter")) {
+      filterValue = v.trim().slice(7); // remove filter= from start of string
+      // console.log("setting filter to "+filterValue+" from cookie")
+      $('#wt_filter').val(filterValue);
+    }
+  });
+  if(!setViaCookie) {
+    $('#key1').val('aws.region.name');
+    $('#key2').val('kops.cluster.name');
+  }
   // $('#key3').val('aws.instance.id');
   // $('#key4').val('aws.instance.id');
 
@@ -26,10 +41,13 @@ function populateKeySelectors(resource_data_list) {
 // Skips empty fields
 function getKeyList() {
   keys = [];
-  $('.menuoptions select').each(function() {
+  i = 1;
+  $('.menuoptions select').each(function(index) {
     var selection = $(this).find('option:selected').val();
     if(selection) {
+      document.cookie = "key"+i+"="+selection
       keys.push(selection);
+      i++;
     }
   });
   return keys;
@@ -41,6 +59,8 @@ function makeDescription(data) {
     val = data[key]
     if(val === undefined) {
       val = "N/A"
+    } else if(Array.isArray(val)) {
+      val = _.uniq(val).join("<br>");
     }
     description = description + '<div class="Rtable-cell cell-head">'+key+': </div>';
     description = description + '<div class="Rtable-cell">'+val+'</div>';
@@ -48,4 +68,9 @@ function makeDescription(data) {
   description = description + '</div></div>'
 
   return description
+}
+
+
+function collapseTree(depth) {
+
 }
